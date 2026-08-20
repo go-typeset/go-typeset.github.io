@@ -18,6 +18,11 @@
       } catch (e) {}
     })();
   </script>
+  {{/* The shared stylesheet is tuned to one accent. An org whose mark is a
+       different colour overrides the three accent tokens here rather than
+       forking the CSS — otherwise its page reads in another org's colour, which
+       is exactly how this one shipped with a cyan accent under an indigo mark. */}}
+  {{ with .Site.Params.accent }}<style>:root{--accent:{{ . }};{{ with $.Site.Params.accent2 }}--accent-2:{{ . }};{{ end }}{{ with $.Site.Params.accent3 }}--accent-3:{{ . }};{{ end }}}</style>{{ end }}
 </head>
 <body>
   {{ partial "nav.html" . }}
