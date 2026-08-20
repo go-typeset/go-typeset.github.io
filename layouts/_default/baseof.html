@@ -18,11 +18,26 @@
       } catch (e) {}
     })();
   </script>
-  {{/* The shared stylesheet is tuned to one accent. An org whose mark is a
-       different colour overrides the three accent tokens here rather than
-       forking the CSS — otherwise its page reads in another org's colour, which
-       is exactly how this one shipped with a cyan accent under an indigo mark. */}}
-  {{ with .Site.Params.accent }}<style>:root{--accent:{{ . }};{{ with $.Site.Params.accent2 }}--accent-2:{{ . }};{{ end }}{{ with $.Site.Params.accent3 }}--accent-3:{{ . }};{{ end }}}</style>{{ end }}
+  {{/* The shared stylesheet is tuned to one accent — cyan. An org whose mark is
+       another colour states its own here rather than forking the CSS.
+
+       All FOUR blocks have to be emitted, not just :root. The stylesheet defines
+       the tokens again under "@media (prefers-color-scheme: dark)
+       :root:not([data-theme=light])" and under :root[data-theme=dark/light], and
+       those selectors are MORE SPECIFIC than a bare :root — so overriding :root
+       alone changes the served CSS and nothing on screen. That is precisely how
+       the first attempt shipped: --accent:#4F46E5 in the document, a cyan page in
+       the browser, and only a screenshot to tell the difference. */}}
+  {{ with .Site.Params.accent }}
+  {{ $l1 := . }}{{ $l2 := $.Site.Params.accent2 | default . }}{{ $l3 := $.Site.Params.accent3 | default . }}
+  {{ $d1 := $.Site.Params.accentDark | default . }}{{ $d2 := $.Site.Params.accentDark2 | default $l2 }}{{ $d3 := $.Site.Params.accentDark3 | default $l3 }}
+  <style>
+  :root{--accent:{{ $l1 }};--accent-2:{{ $l2 }};--accent-3:{{ $l3 }}}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--accent:{{ $d1 }};--accent-2:{{ $d2 }};--accent-3:{{ $d3 }}}}
+  :root[data-theme="light"]{--accent:{{ $l1 }};--accent-2:{{ $l2 }};--accent-3:{{ $l3 }}}
+  :root[data-theme="dark"]{--accent:{{ $d1 }};--accent-2:{{ $d2 }};--accent-3:{{ $d3 }}}
+  </style>
+  {{ end }}
 </head>
 <body>
   {{ partial "nav.html" . }}
