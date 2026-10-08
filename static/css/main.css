@@ -163,6 +163,7 @@ nav a:hover { color: var(--fg); }
   text-decoration: none;
   transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s, background 0.18s;
 }
+  .btn .icon{display:inline-block;vertical-align:-0.15em;margin-right:.45em}
 .btn-primary {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
   color: var(--btn-fg);
