@@ -1,28 +1,88 @@
-{{ define "main" }}
-<section class="hero">
-  <img class="hero-logo" src="{{ "img/logo.svg" | relURL }}" alt="go-typeset logo" width="96" height="96">
-  <h1>
-    <span class="accent">{{ .Site.Params.heroAccent }}</span>
-  </h1>
-  {{ with .Site.Params.heroTagline }}<p class="tag">{{ . }}</p>{{ end }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ .Site.Title }}{{ with .Site.Params.titleSuffix }} &mdash; {{ . }}{{ end }}</title>
+<meta name="description" content="{{ .Site.Params.description }}">
+<link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
+{{ partial "styles.html" . }}
+{{/* The template's own rules for what <main> holds, kept for it alone (class legacy),
+     its colours read from the kit's tokens. Written by landingmigrate. */}}
+<style>
+.legacy{--fg:var(--ink);--bg-2:#dcf4f9;--muted:var(--slate);--accent-2:#06b6d4;--accent-3:#67e8f9;--code-bg:#dff4f9;--border:var(--line);--btn-fg:#ffffff;--hero-gradient-1:rgba(103, 232, 249, 0.30);--hero-gradient-2:rgba(8, 145, 178, 0.18)}
+@media(prefers-color-scheme:dark){:root:not([data-theme]) .legacy{--bg-2:#072a34;--accent-2:#67e8f9;--accent-3:#a5f0fb;--code-bg:#0a2e3a;--btn-fg:#04171d;--hero-gradient-1:rgba(34, 204, 226, 0.22);--hero-gradient-2:rgba(8, 145, 178, 0.30)}}
+:root[data-theme="dark"] .legacy{--bg-2:#072a34;--accent-2:#67e8f9;--accent-3:#a5f0fb;--code-bg:#0a2e3a;--btn-fg:#04171d;--hero-gradient-1:rgba(34, 204, 226, 0.22);--hero-gradient-2:rgba(8, 145, 178, 0.30)}
+.legacy h2{margin-top: 3rem;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;}
+.legacy h3{font-size: 1.05rem; margin-top: 1.5rem;}
+.legacy .section-lead{color: var(--muted); max-width: 72ch; margin: 0.75rem 0 0;}
+.legacy code{font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  background: var(--code-bg);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;}
+.legacy pre{background: var(--code-bg);
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border: 1px solid var(--border);}
+.legacy pre code{background: none; padding: 0; font-size: 1em;}
+.legacy ul.features{padding-left: 1.2rem;}
+.legacy ul.features li{margin-bottom: 0.5rem;}
+.legacy .grid{display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;}
+.legacy .card{border: 1px solid var(--border);
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  background: var(--bg);
+  transition: border-color 0.18s, transform 0.18s;}
+.legacy .card:hover{border-color: var(--accent); transform: translateY(-1px);}
+.legacy .card h4{margin: 0 0 0.3rem; font-size: 0.95rem; font-weight: 600;}
+.legacy .card p{margin: 0; font-size: 0.88rem; color: var(--muted);}
+.legacy .card h4 a{color: inherit; text-decoration: none;}
+.legacy .card h4 a:hover{color: var(--accent);}
+</style>
+</head>
+<body class="lm">
+  <header class="nav"><div class="wrap">
+    <a class="brand" href="/"><img class="glyph" src="/img/logo.svg" width="32" height="32" alt="go-typeset logo"> {{ .Site.Title }}</a>
+    {{ partial "theme-toggle.html" . }}
+  </div></header>
+  {{ partial "fork-ribbon.html" "https://github.com/go-typeset" }}
+
+  <div class="hero"><div class="wrap">
+    <div>
+      <h1 class="head"><span class="accent">{{ .Site.Params.heroAccent }}</span></h1>
+      <div class="legacy">{{ with .Site.Params.heroTagline }}<p class="tag">{{ . }}</p>{{ end }}
   <div class="intro">
     {{ range .Site.Params.heroIntro }}<p>{{ . | safeHTML }}</p>{{ end }}
-  </div>
-  <div class="cta">
-    <a class="btn btn-primary" href="https://github.com/go-typeset/linebreak">{{ partial "icons/mark-github.html" . }}linebreak</a>
-    <a class="btn btn-ghost" href="https://github.com/go-typeset">{{ partial "icons/mark-github.html" . }}GitHub</a>
-  </div>
-  <p class="pills">
-    <span class="pill">Pure Go</span>
-    <span class="pill">CGO=0</span>
+  </div></div>
+      {{/* [[params.cta]] in hugo.toml: the kit renders the row */}}
+      {{ partial "cta.html" . }}
+      <div class="trust"><span class="pill">Pure Go</span>
+    {{ if not (partial "mantra-on.html" $) }}<span class="pill">CGO=0</span>{{ end }}
     <span class="pill">Standard library only</span>
     <span class="pill">100% coverage</span>
     <span class="pill">6 architectures</span>
-    <span class="pill">BSD-3-Clause</span>
-  </p>
-</section>
+    {{ if not (partial "mantra-on.html" $) }}<span class="pill">BSD-3-Clause</span>{{ end }}</div>
+    </div>
+    {{ partial "hero-carousel.html" . }}
+  </div></div>
 
-<section id="why">
+  {{ with .Site.Params.repos }}<div class="strip"><div class="wrap">
+    <span class="lead-line">One organisation, <b>{{ len . }}</b> repositories</span>
+    <div class="mods">{{ range . }}<a href="#repos">{{ .name }}</a>{{ end }}</div>
+  </div></div>{{ end }}
+
+  <main id="repos" class="legacy"><div class="wrap"><section id="why">
   <h2>Why go-typeset</h2>
   <p>
     Breaking a paragraph into lines well is not a TeX feature &mdash; it is an
@@ -75,5 +135,8 @@
     useful signal that the extraction was real: an algorithm sealed inside its only
     caller never has to expose its parameters.
   </p>
-</section>
-{{ end }}
+</section>  </div></main>
+
+  <footer><div class="wrap"><span>{{ .Site.Params.brandName }} &mdash; <a href="https://github.com/{{ .Site.Params.github }}">{{ .Site.Params.github }} on GitHub</a>{{ with .Site.Params.docsURL }} &middot; <a href="{{ . }}">Documentation</a>{{ end }} &middot; {{ if not (partial "mantra-on.html" $) }}BSD-3-Clause &middot; {{ end }}{{ if not (partial "mantra-on.html" $) }}pure Go, CGO=0{{ end }}</span></div></footer>
+</body>
+</html>
